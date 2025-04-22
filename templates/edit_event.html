@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Event</h1>
+        <form id="editEventForm">
+            <input type="text" id="eventName" value="{{ event.name }}" required>
+            <input type="date" id="eventDate" value="{{ event.date }}" required>
+            <input type="text" id="eventLocation" value="{{ event.location }}" required>
+            <button type="submit">Update Event</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('editEventForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const eventId = "{{ event._id }}";
+            const updatedData = {
+                name: document.getElementById('eventName').value,
+                date: document.getElementById('eventDate').value,
+                location: document.getElementById('eventLocation').value,
+            };
+
+            fetch(`/edit_event/${eventId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+                window.location.href = '/';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Event Management System</h1>
+
+        <h2>Add Event</h2>
+        <form id="addEventForm">
+            <input type="text" id="eventName" placeholder="Event Name" required>
+            <input type="date" id="eventDate" required>
+            <input type="text" id="eventLocation" placeholder="Event Location" required>
+            <button type="submit">Add Event</button>
+        </form>
+
+        <h2>Existing Events</h2>
+        <ul id="eventList">
+            {% for event in events %}
+            <li>
+                <span>{{ event.name }} ({{ event.date }}) - {{ event.location }}</span>
+                <a href="/edit_event/{{ event._id }}" class="edit-button">Edit</a>
+                <button onclick="deleteEvent('{{ event._id }}')" class="delete-button">Delete</button>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        document.getElementById('addEventForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const eventData = {
+                name: document.getElementById('eventName').value,
+                date: document.getElementById('eventDate').value,
+                location: document.getElementById('eventLocation').value,
+            };
+
+            fetch('/add_event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(eventData)
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+                location.reload();
+            });
+        });
+
+        function deleteEvent(eventId) {
+            fetch(`/delete_event/${eventId}`, {
+                method: 'DELETE',
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+                location.reload();
+            });
+        }
+    </script>
+</body>
+</html>
